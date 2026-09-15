@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f6f1e6">
+<title>谋局道场 · 谋局 步棋 人局 人性 本心</title>
+<script src="cases.js"></script>
+<style>
+:root{
+  --paper:#f6f1e6; --card:#fffdf6; --ink:#26221a; --sub:#6f6653; --line:#e4dbc6;
+  --zhu:#b5402e; --qing:#2b3a55; --jin:#a8842c; --green:#3e6b4f;
+  --radius:12px; --shadow:0 1px 3px rgba(60,50,20,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.75 -apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+h1,h2,h3,.serif{font-family:"Songti SC","Noto Serif SC","STSong",serif;}
+header{position:sticky;top:0;z-index:50;background:rgba(246,241,230,.96);backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);}
+.hbar{max-width:1080px;margin:0 auto;display:flex;align-items:center;gap:14px;padding:10px 16px;}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);}
+.seal{width:34px;height:34px;background:var(--zhu);color:#fff;border-radius:6px;display:flex;
+  align-items:center;justify-content:center;font-family:"Songti SC",serif;font-size:20px;font-weight:700;
+  box-shadow:inset 0 0 0 2px rgba(255,255,255,.35);}
+.brand b{font-size:19px;letter-spacing:2px;}
+.brand small{color:var(--sub);font-size:11px;display:block;letter-spacing:1px;}
+nav{display:flex;gap:2px;overflow-x:auto;-webkit-overflow-scrolling:touch;flex:1;}
+nav a{padding:7px 12px;border-radius:8px;text-decoration:none;color:var(--sub);white-space:nowrap;font-size:14.5px;}
+nav a.on{background:var(--qing);color:#fff;}
+nav a:hover{background:#ece5d3;color:var(--ink);}
+main{max-width:1080px;margin:0 auto;padding:22px 16px 80px;}
+footer{border-top:1px solid var(--line);color:var(--sub);font-size:12.5px;text-align:center;padding:18px;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:18px 20px;margin-bottom:14px;}
+.grid{display:grid;gap:14px;}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+.kicker{font-size:12px;letter-spacing:3px;color:var(--zhu);text-transform:uppercase;}
+.big{font-size:46px;font-weight:700;line-height:1.1;font-family:"Songti SC",serif;}
+.sub{color:var(--sub);}
+.tag{display:inline-block;font-size:12px;padding:1px 9px;border-radius:99px;border:1px solid var(--line);
+  color:var(--sub);margin-right:6px;vertical-align:middle;}
+.tag.z{background:#f7e6e1;border-color:#e8c4ba;color:var(--zhu);}
+.tag.q{background:#e7ecf3;border-color:#c7d2df;color:var(--qing);}
+.tag.j{background:#f4ecd9;border-color:#e0d0a8;color:var(--jin);}
+.btn{display:inline-block;border:1px solid var(--line);background:#fff;color:var(--ink);padding:8px 16px;
+  border-radius:9px;cursor:pointer;font-size:14.5px;text-decoration:none;}
+.btn:hover{border-color:var(--qing);}
+.btn.p{background:var(--zhu);border-color:var(--zhu);color:#fff;}
+.btn.p:hover{opacity:.92;}
+.btn.ghost{background:transparent;}
+.btn:disabled{opacity:.4;cursor:default;}
+input[type=text],textarea,select{width:100%;border:1px solid var(--line);border-radius:8px;background:#fff;
+  padding:9px 11px;font:inherit;color:var(--ink);}
+textarea{min-height:64px;resize:vertical;}
+label{display:block;font-size:13px;color:var(--sub);margin:12px 0 4px;letter-spacing:.5px;}
+label b{color:var(--ink);}
+.chk{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border:1px solid var(--line);
+  border-radius:9px;margin-bottom:8px;background:#fff;cursor:pointer;}
+.chk input{margin-top:5px;}
+.chk.done{background:#eef3ea;border-color:#ccd9c4;text-decoration:line-through;color:var(--sub);}
+hr{border:none;border-top:1px dashed var(--line);margin:16px 0;}
+.muted{color:var(--sub);font-size:13.5px;}
+.models .m{border-top:1px dashed var(--line);padding:14px 0;}
+.models .m:first-child{border-top:none;padding-top:4px;}
+.models h4{margin:0 0 6px;font-size:16.5px;}
+.models ul{margin:6px 0 4px;padding-left:20px;}
+.models li{margin:3px 0;}
+.src{font-size:12px;color:var(--sub);margin-top:6px;}
+.layerhead{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;}
+.lbadge{font-family:"Songti SC",serif;font-weight:700;color:#fff;border-radius:8px;padding:3px 12px;font-size:15px;}
+.openq{background:#f4efe2;border-left:3px solid var(--jin);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;}
+.flash{min-height:180px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+.flash .q{font-size:22px;font-family:"Songti SC",serif;}
+.flash .a{font-size:16px;color:var(--qing);margin-top:14px;}
+.pivot{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.pivot button{border:1px solid var(--line);background:#fff;border-radius:99px;padding:5px 13px;cursor:pointer;font-size:13.5px;color:var(--sub);}
+.pivot button.on{background:var(--zhu);border-color:var(--zhu);color:#fff;}
+table{width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:10px;overflow:hidden;}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;}
+th{background:#f0e9d8;font-weight:600;}
+.treeq{font-size:19px;font-family:"Songti SC",serif;margin:6px 0 14px;}
+.jitem{border-top:1px dashed var(--line);padding:10px 2px;font-size:14.5px;}
+.jitem:first-of-type{border-top:none;}
+.jmeta{font-size:12px;color:var(--sub);}
+.casehead{cursor:pointer;}
+.casehead h3{margin:0;display:inline;}
+.newpill{background:var(--zhu);color:#fff;font-size:11px;border-radius:99px;padding:2px 9px;margin-left:8px;vertical-align:middle;}
+.stat{display:flex;gap:26px;flex-wrap:wrap;}
+.stat div b{display:block;font-size:26px;font-family:"Songti SC",serif;color:var(--qing);}
+a{color:var(--qing);}
+.bar{height:8px;background:#ece5d3;border-radius:99px;overflow:hidden;margin-top:6px;}
+.bar i{display:block;height:100%;background:var(--zhu);}
+@media(max-width:640px){ .big{font-size:36px;} main{padding:16px 12px 60px;} .card{padding:14px;} }
+</style>
+</head>
+<body>
+<header><div class="hbar">
+  <a class="brand" href="#today"><span class="seal">谋</span><span><b>谋局道场</b><small>谋局 · 步棋 · 人局 · 人性 · 本心</small></span></a>
+  <nav id="nav"></nav>
+</div></header>
+<main id="view"></main>
+<footer>知识底稿：analysis/eq-human-nature/（讲义 + 01–06 章）· 数据仅存本机浏览器，请常到「数据」页导出备份 · v1.4 · 间隔重复+教训卡+弱项分布 · 2026-09-15</footer>
+
+<script>
+'use strict';
+/* ================= 数据层 ================= */
+const BUILD='2026-09-15';
+const LAYERS=[
+{id:'L0',n:'本心罗盘',slogan:'坚守本心',color:'#b5402e',one:'本心是开局前唯一必须锁定的参数：谋略的一切手段都消耗「你是谁」这个资产，先记账才有资格谈消耗。',
+ models:[
+  {n:'三张表锁定目标',d:'动手之前填满，填不满就不许开局。',pts:['终局表：要的最终状态写成可判定的画面，不是「成功/幸福」','手段表：愿意用哪些、明确不用哪些——不用清单=红线，越早写越便宜','代价表：时间/金钱/关系/声誉/心力各付到什么刻度就停，提前写止损线'],src:'讲义 L0.1'},
+  {n:'阳谋经济学（Axelrod 四性质）',d:'短局靠算计，长局靠信用——这是数学结论不是劝善。',pts:['善良：永远不先背叛','可激怒：被占便宜当轮回应，不做老好人','宽容：对方回头立刻翻篇，不记仇过夜','清晰：策略简单到一眼看懂——可预测的善良比深不可测的聪明更可怕，一次被识破的算计摧毁所有未来局的定价'],src:'Axelrod《The Evolution of Cooperation》1984'},
+  {n:'阳明心学的工程化',d:'把「坚守本心」从抒情变成可操作功夫。',pts:['本心/良知＝未经污染的判断系统（知是知非的直觉探测器）','致良知＝每天在具体事务上校准它（事上磨练，不是打坐）','知行合一：「知道但做不到」＝其实不信，回炉重修','自测句：这事敢不敢写进给所有人的公开备忘录？敢=阳谋'],src:'《传习录》；知行合一/致良知'},
+  {n:'目标刻度：单局 vs 长局',d:'多数悲剧来自用单局思维玩长局（或反之）。',pts:['先问这局嵌在哪个更大的局里','最大的那个局叫「你这个人」','换的是手段和路径，锚定的是身份和红线'],src:'讲义 总纲'}],
+ tool:'#canvas',open:['目标会变，本心稳定与目标迭代怎么兼容？（假设：变的是手段，锚定的是身份红线）','红线清单第一次怎么列？','「可激怒」的现代温和版刻度怎么定？'],read:'../谋局能力讲义.md'},
+
+{id:'L1',n:'识局',slogan:'谋局 · 读盘',color:'#8a4a2e',one:'知己知彼是作业流程：拿到任何局面先填五要素画布，填不满的地方就是情报缺口；诊断一句话写不出，禁止进入谋局。',
+ models:[
+  {n:'五要素画布',d:'玩家 / 利益 / 规则 / 信息 / 时间窗，五格强制填写。',pts:['玩家：谁能影响结果？含不在场但能掀桌的人','利益：真正要什么（不是他说他要什么）——把立场当利益是头号盲区','规则：显规则（制度）+潜规则（惯例/面子），潜规则才是执行层','信息：谁知道什么；高估自己信息质量是通病','时间窗：局的有效期；默认局是静态的是错觉，多数局拖久必变盘'],src:'讲义 L1.1'},
+  {n:'Rumelt 战略核（验收标准）',d:'识局的标准输出=三件套；反面是坏战略四征兆。',pts:['诊断：把纷繁现实压缩成一个关键挑战——不尖锐后面全空转','指导方针：应对挑战的总路线，只指方向不给清单','连贯行动：资源与动作互相咬合','坏战略征兆：空话堆砌 / 回避真挑战 / 把目标当战略 / 烂目标'],src:'Rumelt《Good Strategy / Bad Strategy》'},
+  {n:'孙子五事七计',d:'两千年前版本的尽职调查清单。',pts:['道=民意/合法性；天=宏观时机；地=赛道位置；将=人才；法=内部效率','七计＝拿五维跟对手逐项对比打分'],src:'《孙子兵法·始计》'},
+  {n:'最容易丢的三个人',d:'识局漏了他们，赢了执行输了体系。',pts:['裁判：能改规则的人（上级/监管/平台）','观众：影响声誉定价的旁观者——很多局输在观众席','未来的自己：三年后接残局的人，问他愿不愿意接'],src:'讲义 L1.4'}],
+ tool:'#canvas',open:['情报有限时最低要填哪几格才许动手？（候选：玩家+利益+时间窗三缺一不动）','潜规则怎么系统侦察？'],read:'../谋局能力讲义.md'},
+
+{id:'L2',n:'谋局',slogan:'谋局 · 布盘',color:'#2b3a55',one:'先胜而后战：先保证自己没有致命暴露，再等对手出错。高手不是算无遗策，是把自己放在输不了的位置上等。',
+ models:[
+  {n:'选场：会打的先挑地方',d:'不在对手选的战场、用对手选的规则、按对手选的时间打。',pts:['打得赢就打，打不赢就走——换场不丢人，硬打才丢人','曾国藩版：结硬寨打呆仗，每进一步都不可逆，适合输不起的一方'],src:'讲义 L2.1'},
+  {n:'造势：围棋三件工具',d:'位置优势的极致研究可以直接搬。',pts:['势 vs 地：早期多取势（能力/关系/品牌），后期多收地（现金流/份额）','厚势：没有断点的结构——财务冗余、多元技能、可验证信誉，让你「不可被攻击」','余味（aji）：故意不开完的条件、协议里留的复选项——现在不用，未来可选'],src:'围棋理论现代转译（书目级）'},
+  {n:'留余地：期权思维',d:'每一手都买「继续的权利」而不是「全部的承诺」。',pts:['BATNA：真实筹码不是诉求而是替代选项；没有 BATNA 的人是猎物','小赌注探针：可承受的小动作测反应，再加注','冗余：关键路径永远有 plan B；单点依赖=把命门放别人手里'],src:'讲义 L2.3'},
+  {n:'卡时间窗：局的半衰期',d:'所有局都有有效期。',pts:['抢窗：窗口开启时集中投入（先发期/对手换届期/恐慌期）','熬缩：窗口不利时用冗余拖到变盘','论持久战骨架：防御→相持→反攻，每阶段换打法——跟时间做朋友'],src:'讲义 L2.4'}],
+ tool:'#canvas',open:['「势」怎么量化追踪？（候选：可调用资源清单+他人主动来找你的频次）','换场成本怎么事前估算？'],read:'../谋局能力讲义.md'},
+
+{id:'L3',n:'落子',slogan:'步棋',color:'#3e6b4f',one:'谋局定了在哪打，落子解决每一步怎么走：要么积累位置，要么逼对手犯错。',
+ models:[
+  {n:'主动权（tempo / OODA）',d:'胜负常取决于谁先完成自己的决策循环。',pts:['Boyd OODA：观察→调整→决策→行动，运转在对手内环里','每手问：这步是逼对手回应（我掌握 tempo），还是回应对手（在他的 tempo 里）？',' tempo 里的应手要想怎么转化为反先手'],src:'Boyd《Patterns of Conflict》'},
+  {n:'正合奇胜',d:'正=预期内的正面力量（不下牌桌），奇=预期外的角度（赢下牌桌）。',pts:['只用正→消耗战；只用奇→赌徒','健康比例：正面稳住+小成本持续试奇，试出胜率就切主力','奇手产生机制（土办法）：每周强制列 3 个「对手绝对想不到」的选项'],src:'《孙子兵法·势篇》'},
+  {n:'弃取：会输子的人才会赢棋',d:'局部损失换全局先手；沉没成本不参与决策。',pts:['弃子争先：让出无关紧要的功劳/条款/面子，换关键节奏或立场','每步只算「从此刻起最优」','kill criteria：事前写触发信号，触发就撤——写的时候是 CEO，局中的你是赌徒'],src:'讲义 L3.3'},
+  {n:'收官：赢在最后十步',d:'优势不会自动变成胜利。',pts:['领先后的正确动作是收缩和锁定','把流动的优势固化成结构：合同/制度/习惯/关系/复购','多数局赢在中盘输在官子——赢家在优势期又开始浪'],src:'讲义 L3.4'}],
+ tool:'#move',open:['奇手除了穷举还有没有更可靠的产生机制？','怎么给自己装「强制 Orient」的铃（OODA 第二步最常被跳过）？'],read:'../谋局能力讲义.md'},
+
+{id:'L4',n:'谋人局',slogan:'谋人局',color:'#a8842c',one:'不要说服人，要设计处境：让别人的利益自动推动你的目标（阳谋）。人性不想被说服，人性想被理解。',
+ models:[
+  {n:'激励相容 / 利益翻译',d:'最优解不是打动他，是让「帮你」落在他自己利益的路径上。',pts:['阳谋定义：把牌摊开，对手按自己的利益走，结果恰好成全我——不依赖信息优势，不怕被看穿','利益翻译三问：他的 KPI 是什么？他怕什么？他向谁交差？','然后把你的诉求改写成帮他交差/避雷的形状'],src:'讲义 L4.1'},
+  {n:'结盟：利益图谱先于感情',d:'找天然盟友，不找酒肉投缘。',pts:['天然盟友=利益同向且互补的人','联盟寿命=利益重叠期；开局就想好分岔时的体面退出','给功劳是建联盟最便宜的手段——功劳是流水，盟友是资产'],src:'讲义 L4.2'},
+  {n:'谈判工具箱（原则派+共情派）',d:'两手都要硬。',pts:['原则派：对事不对人；谈利益不谈立场；发明双赢选项；客观标准；BATNA 定底线','标注：「你们担心的是工期对吧？」——说中的情绪自动降温，用「看起来/听起来」留否定空间','镜像+沉默≥4 秒；「你说得对」=对方感到被完整理解','校准问题只用「什么/如何」，禁「为什么」；设计让对方安全地说「不」','指控审查先拔刺：「我知道您会想：又是来要人的」','Ackerman 砍价：让步 65→85→95→100 递减+非整数终价（学术验证较弱，降级使用）'],src:'Fisher&Ury《Getting to Yes》；Voss《Never Split the Difference》；05 章'},
+  {n:'沟通实战速查（NVC/关键对话/SBI）',d:'冲突争的不是谁有理，是谁感到安全、被看见。',pts:['NVC 四步：观察→感受→需要→请求；请求与命令的分界=对方拒绝后你是否惩罚','关键对话：崩坏=安全感缺失；对比说明「我不是…我是…」；用「同时」替换「但是」','SBI 反馈：情境-行为-影响(+意图)；三明治反馈约 31% 效应为负，弃用','道歉六要素权重最高：承认责任+提出修复；禁「但是」禁「如果」禁只道歉不修复','被指责四步：标注→复述求确认→对比说明→校准问题「我现在怎么做最合适？」'],src:'Rosenberg；Patterson；CCL；Lewicki 2016；05 章'},
+  {n:'面子与叙事',d:'东方人局的水电煤。',pts:['给台阶：赢得越满未来局越难打，逼到墙角的对手会掀桌','给身份：把你要的行为包装成对方身份的自然延伸','叙事先手：局的解释权是战场——主动、诚实、尽早讲你的版本','面子四规则：纠错私下、表扬公开；能力之争可让、人品指控绝不碰；面子税=造「早预警是功劳」的上报渠道'],src:'讲义 L4.4；04 章'},
+  {n:'职场局：向上管理与四局应对',d:'职场关系=权力与信息不对称下的价值交换：向上靠确定性赢信任，自保靠留痕。',pts:['向上三法则：预期不是用来满足是用来塑造的；风险不是用来隐藏是用来兑换资源的；价值不是用来自嗨是用来翻译的','坏消息四段式：客观事实一句话+量化影响+方案 A/B 标优劣成本+需对方决策的点——越早说代价越小（早说=风险提示，爆雷=隐瞒）','邀功不招恨：用数据不用形容词（单帧 26ms→22ms，提速 15%）；归因往上送；每周主动同步板块','四局共同解（抢功/穿小鞋/背锅/甩锅）=留痕+中立陈述事实+谈规则不谈委屈','背锅防御：口头派活当场接，回工位 5 分钟内文字确认四要素（任务/时间/标准/风险）+「未回复视为确认」，走企业 IM 不走私人微信'],src:'06 章（向上管理/四局应对）'},
+  {n:'鬼谷子：反应与揣摩',d:'情报术的祖师爷版本。',pts:['钓语察情：用呼应、重复、沉默钓出真话','反以观往，覆以验来：用履约历史给承诺打折','揣=量权（客观形势）先于摩=顺情绪试探内心','现代动作：多听、复述确认、沉默施压'],src:'《鬼谷子·反应/揣/摩》'}],
+ tool:'#human',open:['结构性利益冲突时怎么办？（候选：升维换局或建可激怒威慑）','哪些「框架化」是正当修辞、哪些已是误导？需要案例库'],reads:['../谋局能力讲义.md','../05-沟通冲突实战.md','../06-职场人情世故与防御.md']},
+
+{id:'L5',n:'穿透人性',slogan:'穿透人性',color:'#6b4a7a',one:'人不变的部分才是可依赖的预测基础：行为=认知捷径×地位自保×三大需求的合成函数。',
+ models:[
+  {n:'母机制：系统1/系统2',d:'系统 2 很懒，多数时候直接采纳系统 1——人是认知吝啬鬼。',pts:['一切偏误的共同源头','对己：重大决策前强制唤醒系统 2','对人：预期他会走捷径并为其设计，而不是要求他理性'],src:'Kahneman《Thinking, Fast and Slow》；04 章'},
+  {n:'人性常数地图（15 条）',d:'恐惧系/身份系/社会计量系/动机系，详见「人性」页可闪卡训练。',pts:['恐惧：损失厌恶（≈2 倍，系数≈2.25 但波动）/剥夺超反应/怀疑规避','身份：承诺一致/自我服务偏差/喜恶/统一性','社会计量：互惠/社会认同/权威/稀缺','动机：激励超反应/地位寻求/峰终定律'],src:'Cialdini 七原则；芒格 25 倾向；讲义 L5'},
+  {n:'三大需求与德西效应',d:'自主/胜任/归属——满足状态解释身边八成「不讲道理」。',pts:['预期性有形奖励（控制性）削弱内在动机；信息性反馈增强','零成本三杠杆：给选择权+拆小目标让进步可见+让成果被看见','奖励用意外惊喜优于事先承诺；夸过程方法不夸人'],src:'Ryan & Deci 2000；Deci 1999 元分析；04 章'},
+  {n:'地位双路径 + 脸与面子',d:'人突然有攻击性，高概率解释：他感到地位受挑战。',pts:['支配型靠强制、联盟反转即崩；威望型靠本事换自愿追随——只有威望能换忠诚','「脸」（道德面）任何情况必须维护→质疑人品比质疑能力反应更激烈','丢面子=愤怒+害羞双情绪；被当众纠错后反咬=面子+地位双受损','纠错私下做，表扬公开做；给台阶用「我基于新信息调整」'],src:'Henrich & Gil-White 2001；Hu 1944；Hwang 2006；04 章'},
+  {n:'误判要点清单',d:'高频且杀伤大的几条，带数字。',pts:['损失厌恶系数≈2.25（估计值随情境波动，勿当精确常数）','锚定：先报价者设定参照系','达克效应稳妥表述：新手高估幅度更大（原始 62 vs 12 百分位数据有统计伪迹争议）','承诺升级：对失败方向追加投入，机制=自辩；越公开地位越高越难撤→对策：换人决定+事先退出标准','道德许可：刚做好事的人要观察其后续行为（复制性存疑，当风险提示）'],src:'Kahneman & Tversky 1979；Kruger & Dunning 1999；Staw 1976；04 章'},
+  {n:'识人＝基线偏离（概率推断，不是解码）',d:'没有单一看穿人心的密码。',pts:['先聊非威胁话题 3–5 分钟建基线，只读关键问题那一刻的偏离；需≥3 个行为群+排除替代解释','微表情出现率仅约 2%、真假陈述无差异——不能测谎','普通人测谎准确率约 54%，判谎仅 47%（真相偏误）','较可靠通道：安抚行为频率突增、腿脚方向、躯干朝向（比脸难伪装）','奥赛罗错误：把无辜者的紧张误读为露馅；压力信号≠欺骗信号','问具体事件不问观点；同题换角度多问（真事越讲细节越多）；倒叙让编造者先崩（认知负荷）'],src:'Navarro；Bond & DePaulo 2006；Vrij；ten Brinke & Porter 2008；03 章'},
+  {n:'Cialdini 七+1 与使用三守则',d:'同一根杠杆：真实使用是信任建设，虚假使用是信任爆破。',pts:['互惠/承诺一致/社会认同/喜好/权威/稀缺/联盟（Unity）','守则一：设计处境优先于触发偏差——恩惠要真实、承诺要自愿','守则二：Lollapalooza 警觉——多杠杆同压时产生极端结果，识别局里压了哪几根','守则三：反向监控——重大决策前问「我现在正被哪条推着走？」'],src:'Cialdini《影响力》；芒格《人类误判心理学》；讲义 L5'},
+  {n:'操纵识别与反制（防御面）',d:'PUA/煤气灯/DARVO 的判据与四件反制工具。',pts:['PUA 九信号（满足 3 条高度警惕）：人身攻击不就事论事/无限拔高付出/否定所有成果放大所有失误/煤气灯打压/画饼不谈钱/双重标准/道德归属捆绑/冷暴力羞辱/剥夺话语权——与正常严格的分界=批评之后有没有指导','煤气灯自检：你是否需要靠对方的话来确认「昨天发生了什么」？','DARVO 三步：否认→攻击→反转受害者与加害者；实验证明预先了解 DARVO 可显著削弱其效果（Freyd）','反制四工具：外部记录锚定（口头沟通 5 分钟内补文字、会议 24h 内纪要、绝不伪造剪辑）/说不模板（拒绝任务不拒绝关系，不道歉不过度解释）/灰岩石法（只回事实短句，短期战术非长期生活）/止损离场（≥3 条：PUA 常态化、沟通无改善、损害健康、无成长、薪资过低、人格侮辱或违法）','Dark Triad 纪律：连续谱特质不是诊断工具，永不贴标签；量表可伪装——只看长期行为模式'],src:'Stern 2007；Freyd；Paulhus & Williams 2002；06 章'},
+  {n:'情商的科学底座（防忽悠）',d:'三套模型预测力不同；流行说法要过证据筛。',pts:['三套定义：能力模型（MSCEIT，有对错）/胜任力模型（360 他评）/自评量表（≈人格问卷）','建构情绪论：情绪无跨情境指纹（读脸准确率不足 35%）；心跳加速可以是恐惧也可以是兴奋——解读比探测重要','真实效应：情商-绩效 ρ≈.29（真实但小）；控制 IQ+大五后自评情商增量趋零；「90% 顶尖者高情商」是商业来源不可信','可训练性：总效应 g≈0.44，情绪调节 0.58 可练，共情仅 0.22 最难练——用「先问后说比例」替代指望共情突增；短程+演练+反馈最有效','核心可练技能=情绪粒度：把「难受」分成挫败/愤怒/失落，才能匹配精准策略'],src:'Mayer-Salovey；Goleman；Bar-On；Barrett 2017；O\'Boyle 2011；Mehler 2024；01 章'}],
+ tool:'#human',open:['常数之间的相互作用（稀缺×社会认同=恐慌）值得画相变图','跨文化差异（面子/关系权重）未展开'],reads:['../谋局能力讲义.md','../01-情商科学基础.md','../03-识人读情绪.md','../04-人性底层规律.md']},
+
+{id:'L6',n:'守心持局',slogan:'守心 · 长期赢',color:'#31435f',one:'把本心变成结构的最后一层：赢了不飘、输了复盘、受了委屈不变形；情绪调节是守心的生理底座。',
+ models:[
+  {n:'信任复利纪律',d:'唯一的指数资产，日常可执行。',pts:['答应的事留证据链，小事守信是大局信用的本金','被占便宜当轮回应：温和但信号明确——不回应是邀请下一次','别人回头立刻翻篇；翻不了篇的仇怨让你变成局的不稳定源'],src:'Axelrod；讲义 L6.1'},
+  {n:'复盘机器（三问）',d:'每局结束强制三问并写下。',pts:['赌注：我当时下的判断是什么（连同当时的概率预估）','对照：实际发生了什么，差距在哪','归层：情报错 L1/结构错 L2/手法错 L3/读人错 L4L5——用手段错误去改目标的人会把好目标改丢','防事后诸葛：决策时就写下概率预估，复盘对拍'],src:'讲义 L6.2'},
+  {n:'退出纪律',d:'认输是能力不是失败。',pts:['换场/认输的决策权只属于「写代价表那一刻的你」','反求诸己=找可控变量，不等于自责','慎终如始：越接近成功越回到开局的谨慎——收官松懈是最高频死因','可离开性=终极防护：6 个月生活费+持续更新简历+活跃人脉+每季度市场试探——知道随时可走，对方的威胁性大幅下降'],src:'《老子》；《孟子》；06 章；讲义 L6.3'},
+  {n:'情绪调节阶梯（守心的生理底座）',d:'越早介入越省力：改情境＞改注意＞改解读＞改反应。',pts:['元分析排序：认知重评 d=0.36 最有效；分心 d=0.27；死盯 d=−0.26 有害；压抑短期有效长期升唤起损记忆','高强度情绪先分心再重评（Sheppes 2014）；「6 秒法则」无实验支持，有效的是插入暂停这个动作','应激时间线：肾上腺素 20–30 分钟消退、皮质醇数分钟才达峰——「忍住了半小时后更烦」是生理学不是软弱'],src:'Gross 过程模型；Webb 2012；Sheppes 2014；02 章'},
+  {n:'生理急救包',d:'爆发瞬间先处理身体。',pts:['愤怒：物理离开 60–90 秒再开口；消耗型运动 10–15 分钟烧肾上腺素','焦虑：生理性叹息——鼻吸两次+嘴长呼（吸:呼≈1:2），1–5 轮；每天 5 分钟×28 天 RCT 胜过正念','冷水 10–15℃ 淹额头眼周 15–30 秒（潜水反射，心率 30 秒内降 10–25%；禁忌：心律失常/雷诺氏/孕晚期）','崩溃：5 分钟最小动作；「担忧时间」法——写下来约定明天 15 分钟再想'],src:'Balban 2023；DBT TIPP；02 章'},
+  {n:'防反刍：命名·粒度·书写',d:'事后防止越想越累。',pts:['反刍是预测心理病理最强的坏策略；「别想了」触发白熊效应','区分：反思有出口越想越清楚；反刍绕「为什么是我」越想越累','精确命名即调节（affect labeling 下调杏仁核）；情绪粒度训练：每天 5 分钟，禁用「开心/难过」，写场景+精确词+身体感受','当晚书写 15 分钟：发生了什么+感受到什么+最刺痛一句'],src:'Nolen-Hoeksema；Lieberman 2007；Wegner；02 章'},
+  {n:'持续进化环：让能力自己复利',d:'守心的终局形态：能力不靠一次性学习，靠一个不断「检验→强化→验收→记账」的循环。本条目就是本道场自己的进化实录蒸馏。',pts:['检验先于强化：先跑现状拿真实输出（分数/日志/案例），再决定改哪里——没跑过现状的改进是猜','小步+回归门：每轮只改一处，改完必须过「不比改前差」的验收；过不了就回滚——回滚不算失败，粉饰才算','三振而死：同一项连续失败三次就标死、永不再试——给进化留出转向预算','台账接力：每轮把「做了什么/证据/状态」追加进 LEDGER，下一轮从末行接续——断点续接靠账本不靠记忆','诚实门控：完成必附真实运行证据，失败如实记账——账本可信是整个环的地基','进化对象含工具本身：让工具长出「练你最弱处」的自适应（本道场已实现：雷区标记与复盘归层多的层，自动成为今日主修），能力环才闭环'],src:'本道场 2026-09-15 夜间进化实录：守夜人 4 轮+晨报、E2E 13/13、案例 2→6'}],
+ tool:'#review',open:['复盘怎么防事后诸葛亮？（决策时预写概率，v1 已内置）','红线漂移检测机制待设计（慢性磨损比一次击穿更常见）'],read:'../谋局能力讲义.md'}
+];
+
+const TERMS=[
+ {t:'阳谋',en:'open scheme',d:'把牌摊开，对手按自己的利益走，结果恰好成全我。不依赖信息优势，不怕被看穿。',L:'L4'},
+ {t:'激励相容',en:'incentive compatibility',d:'让「帮你」恰好落在他自己利益的路径上——设计处境，不是说服人。',L:'L4'},
+ {t:'主动权',en:'tempo',d:'逼对手回应的是你，被迫回应的是他。每手先问先手在谁。',L:'L3'},
+ {t:'正 / 奇',en:'zheng / qi',d:'正=预期内正面力量让你不下牌桌；奇=预期外角度让你赢下牌桌。',L:'L3'},
+ {t:'弃子争先',en:'sacrifice for tempo',d:'让出无关紧要的功劳/条款/面子，换关键节奏或立场。',L:'L3'},
+ {t:'kill criteria',en:'kill criteria',d:'开局前写好的退出触发信号；触发就执行，别让局中的赌徒否决写表的 CEO。',L:'L3'},
+ {t:'BATNA',en:'best alternative to negotiated agreement',d:'你的真实筹码不是诉求，是替代选项；没有 BATNA 的人是猎物。',L:'L2'},
+ {t:'厚势',en:'thickness',d:'没有断点的结构：财务冗余、多元技能、可验证信誉——让你不可被攻击。',L:'L2'},
+ {t:'余味',en:'aji',d:'故意留的后续手段：现在不用的条件、协议里的复选项。',L:'L2'},
+ {t:'势与地',en:'influence vs territory',d:'外势是面向未来的影响力，实地是当下可见的利益；先取势后收地。',L:'L2'},
+ {t:'诊断',en:'diagnosis',d:'Rumelt 战略核第一件：把纷繁现实压缩成一个关键挑战；写不出一句话就不许开局。',L:'L1'},
+ {t:'结硬寨打呆仗',en:'',d:'不追求奇袭的华丽，追求每一步都不可逆——输不起一方的正道。',L:'L2'},
+ {t:'一报还一报',en:'tit for tat',d:'善良+可激怒+宽容+清晰：重复博弈锦标赛的冠军策略。',L:'L0'},
+ {t:'事上磨练',en:'',d:'致良知的功夫在具体事务里，不在打坐里。',L:'L0'},
+ {t:'知行合一',en:'unity of knowledge and action',d:'真知必变现为行动；「知道但做不到」=其实不信，回炉重修。',L:'L0'},
+ {t:'标注',en:'labeling',d:'说出对方的情绪与处境（「听起来你们担心的是…」），说中即降温；留否定空间。',L:'L4'},
+ {t:'校准问题',en:'calibrated question',d:'只用「什么/如何」开头的开放式问题，把解题责任交回对方；禁「为什么」。',L:'L4'},
+ {t:'指控审查',en:'accusatory audit',d:'抢先说出对方对你最坏的猜测，拔掉刺再谈事。',L:'L4'},
+ {t:'战术共情',en:'tactical empathy',d:'先让对方感到被看见（标注/复述/沉默），再谈事实与方案。',L:'L4'},
+ {t:'对比说明',en:'contrasting',d:'「我不是…我是…」修复安全感；对话崩坏=安全感缺失。',L:'L4'},
+ {t:'SBI 反馈',en:'situation-behavior-impact',d:'情境-行为-影响(+意图)；替代三明治（约 31% 效应为负）。',L:'L4'},
+ {t:'基线',en:'baseline',d:'没有基线就没有偏离：先观察常态 3–5 分钟，再读关键问题的偏离。',L:'L5'},
+ {t:'奥赛罗错误',en:'Othello error',d:'把无辜者的紧张误读为「露馅的愧疚」；压力信号≠欺骗信号。',L:'L5'},
+ {t:'Lollapalooza',en:'',d:'多种倾向同时发力产生极端结果；识别局里同时压了哪几根杠杆。',L:'L5'},
+ {t:'承诺升级',en:'escalation of commitment',d:'对失败方向追加投入，机制=自辩；对策：换人决定+事先退出标准。',L:'L5'},
+ {t:'德西效应',en:'overjustification',d:'控制性有形奖励削弱内在动机；信息性反馈增强。',L:'L5'},
+ {t:'认知重评',en:'cognitive reappraisal',d:'改解读：效应量 d=0.36，情绪调节里最有效的单策略。',L:'L6'},
+ {t:'情绪粒度',en:'emotional granularity',d:'精确命名情绪本身即调节；训练法：场景+精确词+身体感受。',L:'L6'},
+ {t:'生理性叹息',en:'cyclic sighing',d:'鼻吸两次+嘴长呼（吸:呼≈1:2），1–5 轮；最快的行为降温手段之一。',L:'L6'},
+ {t:'煤气灯效应',en:'gaslighting',d:'让你怀疑自己的记忆与判断；自检：是否要靠对方确认「昨天发生了什么」。反制=外部记录锚定。',L:'L5'},
+ {t:'DARVO',en:'deny-attack-reverse victim & offender',d:'被追责时的三步反打：否认→攻击→反转受害者与加害者；实验证明预先了解即显著免疫。',L:'L5'},
+ {t:'灰岩石法',en:'grey rock',d:'只回事实短句（「收到」「按计划进行」），不接茬不解释；无法设界时的短期战术，非长期生活。',L:'L5'},
+ {t:'外部记录锚定',en:'documentation trail',d:'口头沟通 5 分钟内补文字四要素；会议 24h 内纪要抄送；绝不伪造剪辑记录。',L:'L5'},
+ {t:'可离开性',en:'exit option',d:'6 个月生活费+更新简历+活跃人脉+季度市场试探——知道随时可走，威胁性大幅下降。',L:'L6'},
+ {t:'向上管理',en:'managing up',d:'靠确定性赢信任：预期塑造/风险兑换资源/价值翻译；上级最怕「最后一个知道」。',L:'L4'},
+ {t:'PUA 分界线',en:'',d:'批评对事有标准、事后有指导=严格管理；否定全部、羞辱人格、道德捆绑=PUA。',L:'L5'},
+ {t:'建构情绪论',en:'theory of constructed emotion',d:'情绪是大脑的预测建构，无固定指纹（读脸准确率<35%）；解读比探测重要。',L:'L5'},
+ {t:'黑暗三联征',en:'Dark Triad',d:'亚临床自恋/马基雅维利/精神病态；连续谱不是诊断标签，只看长期行为模式。',L:'L5'},
+ {t:'进化环',en:'evolution loop',d:'检验先于强化；小步+回归门；三振而死；台账接力——能力复利的地基是诚实账本。',L:'L6'}
+];
+
+const LEVERS=[
+ {n:'损失厌恶',sys:'恐惧系',hint:'失去的痛约是得到的 2 倍（系数≈2.25 但随情境波动）',q:'我是在保护价值，还是只是不敢面对已发生的损失？'},
+ {n:'剥夺超反应',sys:'恐惧系',hint:'被拿走已有的比从未得到更愤怒',q:'对方在气「损失」还是气「被拿走」？两件事两种谈法。'},
+ {n:'怀疑规避',sys:'恐惧系',hint:'人类厌恶悬而未决，会抓稻草人当答案',q:'我是真的想清楚了，还是只是受不了不确定？'},
+ {n:'承诺一致',sys:'身份系',hint:'公开承诺后行为自动向其靠拢',q:'我是在坚持判断，还是在维护面子上的旧表态？'},
+ {n:'自我服务偏差',sys:'身份系',hint:'成功归自己失败怪环境',q:'复盘时我找的是变量，还是辩词？'},
+ {n:'喜恶倾向',sys:'身份系',hint:'先问喜不喜欢你，再决定信不信你',q:'我信这个观点是因为证据，还是因为说话的人？'},
+ {n:'统一性',sys:'身份系',hint:'「自己人」身份的说服力大于逻辑',q:'对方拒绝的是事，还是拒绝「被外人安排」？'},
+ {n:'互惠',sys:'社会计量系',hint:'受人恩惠必想回报，哪怕不情愿',q:'这个「人情」我回报的是真心，还是还债焦虑？'},
+ {n:'社会认同',sys:'社会计量系',hint:'不确定时抄周围人的作业',q:'「大家都这样」——名单在哪？'},
+ {n:'权威',sys:'社会计量系',hint:'跟着信号明确的专家走',q:'这个权威是这个领域的吗？头衔还是实质？'},
+ {n:'稀缺',sys:'社会计量系',hint:'越难得到越想要，越快失去越冲动',q:'若库存充足、时间无限，我还想要吗？'},
+ {n:'激励超反应',sys:'动机系',hint:'人会为奖励扭曲认知而不自知',q:'我因想赢而看不见哪些坏消息？'},
+ {n:'地位寻求',sys:'动机系',hint:'面子本身是硬通货',q:'这场争执争的是事，还是位子？'},
+ {n:'峰终定律',sys:'动机系',hint:'记住的是峰值和结尾',q:'这段关系的「尾」是什么？收官体验值得专门设计。'}
+];
+
+const DEFENSE=[
+ ['突然示好/送礼后提要求','互惠','好处在先、请求紧随','问自己「没有这好处我答不答应」，按那个答案答'],
+ ['「大家都已经同意了」','社会认同','只给结论不给名单','要原始名单：谁？何时？书面在哪？'],
+ ['最后通牒+倒计时','稀缺+损失厌恶','人为截止时间','时间压力本身是假信号，真窗口经得起追问'],
+ ['「您是专家，肯定看得懂」','身份/喜恶','高帽先于请求','把判断权收回来：「正因我是行内人才要多问」'],
+ ['诱导公开表态再变卦要挟','承诺一致','先让你书面/口头站队','表态加前置条件：「在 X 前提下我同意」'],
+ ['拖延让你成本越陷越深','沉没成本','「都走到这了」话术','回到 kill criteria，只看未来增量'],
+ ['「你记错了」「你太敏感了」','煤气灯','你需要靠对方的话确认「昨天发生了什么」','外部记录锚定：口头沟通 5 分钟内补文字；找 1–2 个可信局外人做现实校准；不自证'],
+ ['你追责，反被说居心不良','DARVO（否认→攻击→反转）','冲突总变成「你有问题」','预先了解即显著免疫（Freyd 实验）；只陈述事实链与时间戳，不入自证陷阱'],
+ ['「上次我都帮你了」','互惠被用作勒索','用旧人情压你接无限义务','人情按对等记账：能花钱的小事付费解决；不道德绑架开口，也不接受绑架']
+];
+
+const ANTIPATTERNS=[
+ ['目标漂移','赢着赢着忘了为什么开局','L0'],
+ ['把立场当利益','跟人争论他嘴上的要求，没看背后的 KPI','L1'],
+ ['在别人的主场硬打','规则、时间、战场全是对方选的','L2'],
+ ['没有 BATNA 谈判','替代方案为零，等于把定价权双手奉上','L2'],
+ ['全程应手，永不主动','永远在回应，节奏权拱手让人','L3'],
+ ['沉没成本上头','用「已经投入」否决「从此最优」','L3'],
+ ['说服成瘾','遇到阻力就想再解释一遍，不肯改处境设计','L4'],
+ ['赢到满盘','不给台阶，逼对手掀桌','L4'],
+ ['用自己的价值观预测对手','你不敢做的假设他不敢做——他敢','L5'],
+ ['信息一次读完','以为识局是开局的作业，不持续侦察','L1'],
+ ['赢了就浪','优势期扩张无度，官子崩盘','L3'],
+ ['记仇型守心','把「不变形」做成「不原谅」，自己变成局的不稳定源','L6']
+];
+
+const DRILLS=[
+ {n:'利益翻译',how:'挑一个关键玩家，写下他的 KPI/他怕什么/他向谁交差，再把你的诉求改写成帮他交差避雷的形状。',L:'L4',min:15},
+ {n:'三个奇手',how:'列出 3 个「对手绝对想不到我这么干」的选项，多数荒谬，留 1 个深想。',L:'L3',min:10},
+ {n:'识局画布',how:'对当前局填五要素+诊断一句话（诊断写不出=情报没做完）。',L:'L1',min:30},
+ {n:'防御对照自测',how:'随机看 3 条攻防对照表，遮住反制列自己先答再对。',L:'L5',min:10},
+ {n:'复盘三问',how:'赌注（含当时概率预估）→对照→归层（L1-L6）。',L:'L6',min:15},
+ {n:'kill criteria 预写',how:'给当前投入最重的事写下触发即撤的信号和检查日期。',L:'L3',min:10},
+ {n:'生理急救演练',how:'生理性叹息 5 轮（鼻吸两次+嘴长呼，吸:呼≈1:2），身体记住比脑子记住有用。',L:'L6',min:3},
+ {n:'情绪粒度',how:'写今天一个情绪场景：场景+精确词（禁「开心/难过」）+身体感受。',L:'L6',min:5},
+ {n:'难谈话预演',how:'把一场将要来的硬谈话改写成：标注→复述→对比说明→校准问题。',L:'L4',min:15},
+ {n:'闪卡 10 张',how:'「人性」页抽 10 张闪卡，错的记「再练」。',L:'L5',min:10},
+ {n:'面子四规则周检',how:'回看本周：纠错有没有私下做？表扬有没有公开做？',L:'L5',min:10},
+ {n:'BATNA 台账',how:'对当前谈判/请求写三行：最好替代、兜底替代、离场线。',L:'L2',min:15},
+ {n:'文字确认四要素',how:'把最近一次口头派活补成文字：任务/时间/标准/风险+「如有出入请告知，未回复视为确认」。',L:'L4',min:5},
+ {n:'PUA 九信号自检',how:'对照九信号给当前环境打分，≥3 条高度警惕；分界=批评之后有没有指导。',L:'L5',min:10},
+ {n:'可离开性盘点',how:'四问：6 个月生活费？简历半年内更新？活跃人脉？上季度市场试探？缺哪补哪。',L:'L6',min:15},
+ {n:'进化环一周目',how:'给自己某个能力跑一轮微进化：跑现状拿基线→改一处→设回归验收→过了才入账，没过就回滚并记录。',L:'L6',min:25}
+];
+
+const QUAD=['他真正的利益是什么？','我在谁的 tempo 里（主动/应手）？','这一步的代价在我代价表刻度内吗？','此刻哪条人性杠杆在推我（或他）？'];
+
+const MOVE_TREE={
+ start:{q:'先手在我吗？',tip:'主动权=逼对手回应的能力',opts:[
+   {t:'在',next:'zheng',note:'打主动手：选能逼对手回应的着法'},
+   {t:'不在',next:'bu',note:'先补结构：防守/留余地，同时布探针找转先手的机会'}]},
+ zheng:{q:'有正合奇胜的组合吗？',opts:[
+   {t:'有',next:'cost',note:'正兵稳住+奇手试小注，胜率验证后主力切换'},
+   {t:'没有',next:'cost',note:'只出正手：推进不冒险，持续造势等奇手窗口'}]},
+ bu:{q:'（先补结构再回来）找到转先手的机会了吗？',opts:[
+   {t:'找到了',next:'zheng',note:'转入主动'},
+   {t:'还没有',next:'cost',note:'继续只出正手，接受暂时应手'}]},
+ cost:{q:'要付的代价，在你代价表刻度内吗？',tip:'没有代价表的先去 L0 补三张表',opts:[
+   {t:'在刻度内',next:'kill',note:''},
+   {t:'超出/没有刻度',next:null,leaf:'exit',note:'弃子或换场——回 L2 重布盘。这不丢人。'}]},
+ kill:{q:'这步之后，kill criteria 触发了吗？',opts:[
+   {t:'没有',next:null,leaf:'go',note:'落子。写进复盘日志（含你此刻对成败的概率预估）。'},
+   {t:'触发了',next:null,leaf:'exit',note:'按预写的表执行撤出。写表的时候你是 CEO，别让局中的赌徒否决他。'}]}
+};
+
+/* ================= 状态层 ================= */
+const KEY='dojo-v1';
+function blank(){return {v:1,journal:[],canvases:[],checks:{},mine:{},flash:{},srs:{},created:BUILD};}
+let S;
+try{S=Object.assign(blank(),JSON.parse(localStorage.getItem(KEY)||'{}'));}catch(e){S=blank();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){/* file:// 受限时仍可浏览 */}}
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function dayOfYear(){const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5);}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function streak(){
+  const days=new Set(Object.keys(S.checks));
+  S.journal.forEach(j=>days.add(j.ts.slice(0,10)));
+  S.canvases.forEach(c=>days.add(c.ts.slice(0,10)));
+  Object.values(S.mine).forEach(v=>{if(v)days.add(v);});
+  let n=0,d=new Date();
+  for(;;){const k=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    if(days.has(k)){n++;d.setDate(d.getDate()-1);}else break;}
+  return n;
+}
+const CASES=(window.DOJO_CASES||[]);
+
+/* ================= 视图层 ================= */
+const NAVS=[['today','今日'],['learn','学·七层'],['canvas','谋局·画布'],['move','落子'],['review','复盘'],['human','人性'],['mine','雷区'],['cases','案例馆'],['data','数据']];
+function renderNav(cur){document.getElementById('nav').innerHTML=NAVS.map(([r,t])=>
+  `<a href="#${r}" class="${cur===r?'on':''}">${t}</a>`).join('');}
+function route(){const h=location.hash.slice(1)||'today';const r=h.split('/')[0];renderNav(r);
+  const v=document.getElementById('view');
+  const fn={today:vToday,learn:vLearn,canvas:vCanvas,move:vMove,review:vReview,human:vHuman,mine:vMine,cases:vCases,data:vData}[r]||vToday;
+  fn(v,h);}
+window.addEventListener('hashchange',route);
+
+function weakness(){
+  const w={};LAYERS.forEach(L=>w[L.id]=0);
+  Object.keys(S.mine).forEach(k=>{if(!S.mine[k])return;const a=ANTIPATTERNS[+k.slice(1)];if(a&&w[a[2]]!=null)w[a[2]]++;});
+  S.journal.forEach(j=>{if(j.type==='review'&&j.layer&&w[j.layer]!=null)w[j.layer]++;});
+  TERMS.forEach((x,i)=>{const r=(S.srs||{})['t'+i];if(r&&r.wrong&&x.L&&w[x.L]!=null)w[x.L]+=r.wrong;});
+  return w;
+}
+function vToday(v){
+  const w=weakness(), wk=Object.entries(w).sort((a,b)=>b[1]-a[1])[0];
+  const adaptive=wk&&wk[1]>0;
+  const li=adaptive?LAYERS.find(L=>L.id===wk[0]):LAYERS[dayOfYear()%LAYERS.length];
+  const pool=DRILLS.filter(d=>d.L===li.id);
+  const dr=pool.length?pool[dayOfYear()%pool.length]:DRILLS[dayOfYear()%DRILLS.length];
+  const radar=adaptive?` · <span class="tag z">弱项雷达：${li.id} 触发 ${wk[1]} 次，今日定向补强</span>`:'';
+  const t=today(), ck=S.checks[t]||{};
+  const allc=buildDeck();
+  const dueCount=allc.filter(c=>{const r=(S.srs||{})[c.k];return r&&r.due&&r.due<=t;}).length;
+  const freshCount=allc.filter(c=>!(S.srs||{})[c.k]).length;
+  const lastRev=S.journal.filter(j=>j.type==='review').slice(-1)[0];
+  const lesson=lastRev?((lastRev.text.split('｜改：')[1]||'').trim()):'';
+  const latest=CASES[CASES.length-1];
+  v.innerHTML=`
+  <div class="card"><div class="kicker">今日 · ${t}</div>
+    <div class="stat" style="align-items:center">
+      <div><span class="big">${streak()}</span><span class="sub"> 天连击</span></div>
+      <div style="flex:1;min-width:220px"><span class="muted">练满四连问或完成任一工具即计入连击。本地 ${S.journal.length} 条日志 · ${S.canvases.length} 张画布。</span>
+        <div class="bar"><i style="width:${Math.min(100,(ck&&Object.values(ck).filter(Boolean).length)*25)}%"></i></div></div>
+    </div></div>
+  <div class="grid g2">
+    <div class="card"><div class="kicker">今日一局 · 主修层${radar}</div>
+      <h2 style="margin:4px 0"><span class="lbadge" style="background:${li.color}">${li.id}</span> ${li.n}</h2>
+      <p style="margin:8px 0">${li.one}</p>
+      <a class="btn" href="#learn/${li.id}">进这一层学</a>
+      <a class="btn ghost" href="#cases">看案例馆</a></div>
+    <div class="card"><div class="kicker">今日操练（约 ${dr.min} 分钟）</div>
+      <h3 style="margin:4px 0">${dr.n} <span class="tag q">${dr.L}</span></h3>
+      <p class="muted" style="margin:6px 0">${dr.how}</p>
+      <span class="muted">顺带完成今日四连问，即算当日入账。</span></div>
+  </div>
+  <div class="card"><div class="kicker">每日四连问</div>
+    ${QUAD.map((q,i)=>`<label class="chk ${ck['q'+i]?'done':''}"><input type="checkbox" data-q="q${i}" ${ck['q'+i]?'checked':''}><span><b>问${i+1}：</b>${q}</span></label>`).join('')}
+  </div>
+  <div class="card"><div class="kicker">持续学习 · 间隔重复</div>
+    <div class="stat" style="align-items:center">
+      <div><b style="font-size:30px;color:var(--qing)">${dueCount}</b><span class="sub"> 张到期</span></div>
+      <div><b style="font-size:30px;color:var(--sub)">${freshCount}</b><span class="sub"> 张未学</span></div>
+      <div style="flex:1;min-width:220px"><span class="muted">${lesson?('上次的教训：'+esc(lesson)):'到期卡片自动浮上来；复盘里写了「改哪」的，这里回放给你。'}</span></div>
+      <a class="btn p" href="#human/flash">去复习</a></div></div>
+  ${latest?`<div class="card"><div class="kicker">守夜人最新一课 · ${esc(latest.date)}</div>
+    <h3 style="margin:4px 0"><a href="#cases">${esc(latest.title)}</a></h3>
+    <p class="muted" style="margin:6px 0">${esc(latest.diagnosis||'')}</p></div>`:''}
+  <div class="grid g3">
+    ${[['#canvas','开一张识局画布'],['#move','走一次落子决策树'],['#review','做一次复盘三问'],['#human','翻几张人性闪卡'],['#mine','查一遍雷区'],['#data','导出备份']].map(([h,t])=>`<a class="btn" href="${h}" style="text-align:center">${t}</a>`).join('')}
+  </div>`;
+  v.querySelectorAll('input[data-q]').forEach(el=>el.addEventListener('change',e=>{
+    const k=today();S.checks[k]=S.checks[k]||{};S.checks[k][el.dataset.q]=el.checked;save();route();}));
+}
+
+function vLearn(v,h){
+  const sel=(h.split('/')[1]||'').toUpperCase();
+  v.innerHTML=`<div class="card"><div class="kicker">知识脊柱</div>
+    <h2 style="margin:4px 0">七层能力体系</h2>
+    <p class="muted">谋局（L1 识局 + L2 谋局）→ 步棋（L3）→ 谋人局（L4）→ 穿透人性（L5）；L0 本心是开局参数，L6 守心是长期赢法。
+    <input id="q" type="text" placeholder="搜索：模型 / 要点 / 术语…（按 / 聚焦）" style="margin-top:10px"></p></div>
+  <div id="layers"></div>`;
+  const box=v.querySelector('#layers');
+  function draw(f){
+    box.innerHTML=LAYERS.filter(L=>!sel||L.id===sel).map(L=>`
+    <div class="card" id="${L.id}">
+      <div class="layerhead"><span class="lbadge" style="background:${L.color}">${L.id}</span>
+        <h2 style="margin:0">${L.n}</h2><span class="tag j">${L.slogan}</span>
+        <a class="btn ghost" style="margin-left:auto" href="${L.tool}">去练 →</a></div>
+      <p style="margin:10px 0 2px">${L.one}</p>
+      <div class="models">${L.models.map(m=>`
+        <div class="m"><h4>${esc(m.n)}</h4><div class="muted" style="margin-bottom:4px">${esc(m.d)}</div>
+          <ul>${m.pts.map(p=>`<li>${esc(p)}</li>`).join('')}</ul><div class="src">来源：${esc(m.src)}</div></div>`).join('')}
+      </div>
+      <div class="openq"><b>开放问题</b>：${L.open.map(esc).join(' ； ')}</div>
+      <div class="src">深读：${(L.reads||[L.read]).map(r=>`<a href="${r}">${esc(r.replace('../',''))}</a>`).join(' · ')}（md 原文）</div>
+    </div>`).join('')||'<div class="card sub">没有匹配的内容。</div>';
+  }
+  draw();const q=v.querySelector('#q');
+  q.addEventListener('input',()=>{const f=q.value.trim();
+    if(!f){draw();return;}
+    const hit=LAYERS.map(L=>({L,ms:L.models.filter(m=>(m.n+m.d+m.pts.join()).includes(f))})).filter(x=>x.ms.length);
+    box.innerHTML=hit.map(({L,ms})=>`<div class="card"><div class="layerhead"><span class="lbadge" style="background:${L.color}">${L.id}</span><h3 style="margin:0">${L.n}</h3></div>
+      <div class="models">${ms.map(m=>`<div class="m"><h4><a href="#learn/${L.id}">${esc(m.n)}</a></h4><div class="muted">${esc(m.d)}</div></div>`).join('')}</div></div>`).join('')||'<div class="card sub">没有匹配的内容。</div>';
+  });
+}
+
+function vCanvas(v){
+  v.innerHTML=`<div class="card"><div class="kicker">工具 · L1</div><h2 style="margin:4px 0">识局画布</h2>
+    <p class="muted">五格填不满=情报缺口；<b>诊断一句话写不出，不许开局</b>（Rumelt 门）。</p>
+    <div class="grid g2" style="margin-top:8px">
+      <div><label>局名 <b>*</b></label><input id="c-name" type="text" placeholder="例：X 项目续约谈判"></div>
+      <div><label>时间窗：这个局的有效期？拖下去对谁有利？</label><input id="c-win" type="text"></div>
+      <div><label>玩家（每行一个，含裁判/观众/未来的自己）</label><textarea id="c-p"></textarea></div>
+      <div><label>利益（每行「谁：真正要什么」）</label><textarea id="c-i"></textarea></div>
+      <div><label>规则（显规则 + 潜规则）</label><textarea id="c-r"></textarea></div>
+      <div><label>信息（谁知道什么；我知道的谁不知道）</label><textarea id="c-f"></textarea></div>
+    </div>
+    <label>诊断一句话 <b>*</b>（问题的结构是什么？）</label><input id="c-dx" type="text" placeholder="例：对方拖的是价格，怕的是换供应商的风险——风险可担保，价格就有空间">
+    <div class="grid g2"><div><label>指导方针（总路线，不写清单）</label><input id="c-gp" type="text"></div>
+    <div><label>首三步（连贯行动）</label><input id="c-mv" type="text"></div></div>
+    <p><button class="btn p" id="c-save">存入账本</button> <span class="muted">画布计入今日连击。</span></p></div>
+  <div id="clist"></div>`;
+  function list(){
+    const el=v.querySelector('#clist');
+    el.innerHTML=(S.canvases.length?'<h3 class="serif" style="margin:18px 0 10px">我的画布（'+S.canvases.length+'）</h3>':'<div class="card sub">还没有画布。第一张就从眼前这个局开始。</div>')+
+      S.canvases.slice().reverse().map(c=>`<div class="card"><div class="layerhead"><b>${esc(c.name)}</b><span class="jmeta">${c.ts.slice(0,16).replace('T',' ')}</span>
+        <span style="margin-left:auto"><button class="btn ghost" data-del="${c.id}">删</button></span></div>
+        <p style="margin:8px 0"><b style="color:var(--zhu)">诊断</b>：${esc(c.dx)}</p>
+        ${c.win?`<p class="muted" style="margin:4px 0"><b>时间窗</b>：${esc(c.win)}</p>`:''}
+        ${c.p?`<p class="muted" style="margin:4px 0;white-space:pre-wrap"><b>玩家</b>：${esc(c.p)}</p>`:''}
+        ${c.i?`<p class="muted" style="margin:4px 0;white-space:pre-wrap"><b>利益</b>：${esc(c.i)}</p>`:''}
+        ${c.r?`<p class="muted" style="margin:4px 0;white-space:pre-wrap"><b>规则</b>：${esc(c.r)}</p>`:''}
+        ${c.f?`<p class="muted" style="margin:4px 0;white-space:pre-wrap"><b>信息</b>：${esc(c.f)}</p>`:''}
+        ${c.gp?`<p class="muted" style="margin:4px 0"><b>方针</b>：${esc(c.gp)}</p>`:''}
+        ${c.mv?`<p class="muted" style="margin:4px 0"><b>首三步</b>：${esc(c.mv)}</p>`:''}
+      </div>`).join('');
+    el.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>{S.canvases=S.canvases.filter(x=>x.id!=b.dataset.del);save();list();});
+  }
+  list();
+  v.querySelector('#c-save').onclick=()=>{
+    const name=v.querySelector('#c-name').value.trim(),dx=v.querySelector('#c-dx').value.trim();
+    if(!name){alert('局名必填');return;}
+    if(!dx){alert('诊断一句话是硬门槛：写不出=识局没完成（回 L1）。');return;}
+    const g=id=>v.querySelector(id).value.trim();
+    S.canvases.push({id:Date.now(),ts:new Date().toISOString(),name,dx,win:g('#c-win'),p:g('#c-p'),i:g('#c-i'),r:g('#c-r'),f:g('#c-f'),gp:g('#c-gp'),mv:g('#c-mv')});
+    S.journal.push({ts:new Date().toISOString(),type:'canvas',text:'开画布：'+name+'｜诊断：'+dx});
+    save();route();};
+}
+
+let MT=MT_state();
+function MT_state(){return {node:'start',path:[]};}
+function vMove(v){
+  const N=MOVE_TREE[MT.node];
+  let html=`<div class="card"><div class="kicker">工具 · L3</div><h2 style="margin:4px 0">落子决策树</h2>`;
+  if(MT.path.length)html+=`<p class="muted">已选：${MT.path.map(esc).join(' → ')}</p><p><button class="btn ghost" id="mt-reset">重走</button></p>`;
+  if(N){html+=`<hr><div class="treeq">${esc(N.q)}</div>${N.tip?`<p class="muted">${esc(N.tip)}</p>`:''}
+    <div class="pivot">${N.opts.map((o,i)=>`<button data-i="${i}">${esc(o.t)}</button>`).join('')}</div>
+    <div id="mt-note" class="muted"></div>`;
+  }
+  html+='</div>';
+  v.innerHTML=html;
+  v.querySelectorAll('[data-i]').forEach(b=>b.onclick=()=>{
+    const o=N.opts[+b.dataset.i];
+    MT.path.push(o.t+(o.note?'（'+o.note+'）':''));
+    if(o.next){MT.node=o.next;route();}
+    else{showLeaf(v,o.leaf,o.note);}
+  });
+  const rb=v.querySelector('#mt-reset');if(rb)rb.onclick=()=>{MT=MT_state();route();};
+}
+function note(t){const el=document.getElementById('mt-note');if(el&&t)el.textContent=t;}
+function showLeaf(v,leaf,text){
+  const isExit=leaf==='exit';
+  v.innerHTML=`<div class="card"><div class="kicker">决策输出</div>
+    <h2 style="margin:6px 0;color:${isExit?'var(--jin)':'var(--green)'}">${isExit?'退出或换场':'落子'}</h2>
+    <p>${esc(text)}</p><p class="muted">路径：${MT.path.map(esc).join(' → ')}</p>
+    <p><button class="btn p" id="mv-log">写进复盘日志</button> <button class="btn ghost" id="mv-again">再走一局</button></p></div>`;
+  document.getElementById('mv-log').onclick=()=>{
+    S.journal.push({ts:new Date().toISOString(),type:'move',layer:isExit?'L2':'L3',text:(isExit?'【退出】':'【落子】')+MT.path.join(' → ')});
+    save();MT=MT_state();location.hash='#review';};
+  document.getElementById('mv-again').onclick=()=>{MT=MT_state();route();};
+}
+function MOVE_TREE_startLeaf(){return null;}
+
+function vReview(v){
+  const opts=S.canvases.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  const byL={};S.journal.forEach(j=>{if(j.layer)byL[j.layer]=(byL[j.layer]||0)+1;});
+  v.innerHTML=`<div class="card"><div class="kicker">工具 · L6</div><h2 style="margin:4px 0">复盘三问</h2>
+    <p class="muted">归错层比归错结论更重要：用手段错误去改目标的人，会把好目标改丢。</p>
+    <div class="grid g2">
+      <div><label>关联画布（可选）</label><select id="r-c"><option value="">不关联</option>${opts}</select></div>
+      <div><label>我的赌注（当时的判断 + 概率预估）</label><input id="r-b" type="text"></div>
+      <div><label>实际发生了什么？差距在哪？</label><textarea id="r-a"></textarea></div>
+      <div><label>归层</label><select id="r-l"><option value="">—</option>${LAYERS.map(L=>`<option value="${L.id}">${L.id} ${L.n}</option>`).join('')}</select></div>
+    </div>
+    <label>改哪（下一局的具体改变）</label><input id="r-f" type="text">
+    <p><button class="btn p" id="r-save">入账</button></p></div>
+  <div class="card"><div class="kicker">账本 · ${S.journal.length} 条</div>
+    <div class="pivot">${LAYERS.map(L=>`<span class="tag q" title="${L.n}">${L.id}×${byL[L.id]||0}</span>`).join('')}</div>
+    ${S.journal.length?S.journal.slice().reverse().slice(0,40).map(j=>`<div class="jitem"><span class="jmeta">${esc(j.ts.slice(5,16).replace('T',' '))} ${j.layer?'<span class="tag z">'+j.layer+'</span>':''} ${esc(j.type)}</span><br>${esc(j.text)}</div>`).join(''):'<p class="sub">空。第一笔从今天的小局记起。</p>'}
+  </div>`;
+  v.querySelector('#r-save').onclick=()=>{
+    const g=id=>v.querySelector(id).value.trim();
+    const bet=g('#r-b');
+    if(!bet){alert('赌注必填：写下你当时的判断（和概率预估），复盘才防事后诸葛。');return;}
+    const cid=g('#r-c');const cname=cid?(S.canvases.find(c=>c.id==cid)||{}).name:'';
+    S.journal.push({ts:new Date().toISOString(),type:'review',layer:g('#r-l')||'L6',
+      text:(cname?'【'+cname+'】':'')+'赌注：'+bet+'｜差距：'+g('#r-a')+'｜改：'+g('#r-f')});
+    save();route();};
+}
+
+let FIDX=0,FBACK=false;
+function buildDeck(){
+  const cards=[];
+  TERMS.forEach((x,i)=>cards.push({k:'t'+i,q:x.t,a:esc(x.d)+'<br><span class="jmeta">'+(x.en?x.en+' · ':'')+'所属 '+x.L+'</span>',tag:'术语'}));
+  LEVERS.forEach((x,i)=>cards.push({k:'l'+i,q:x.n,a:esc(x.hint)+'<br><span class="jmeta">自查：'+esc(x.q)+'</span>',tag:x.sys}));
+  CASES.forEach(c=>cards.push({k:'case:'+c.id,q:'案例「'+c.title+'」的一句话 takeaway 是？',a:esc(c.takeaway||'')+'<br><span class="jmeta">'+esc(c.date)+' 案例</span>',tag:'案例'}));
+  (S.journal||[]).filter(j=>j.type==='review').slice(-10).forEach(j=>{
+    const fix=(j.text.split('｜改：')[1]||'').trim();
+    if(fix)cards.push({k:'rev:'+j.ts,q:'你自己的复盘：「'+esc(j.text.split('｜')[0].replace('赌注：',''))+'」——当时的改法是什么？',a:esc(fix)+'<br><span class="jmeta">来自你自己的复盘</span>',tag:'教训'});
+  });
+  return cards;
+}
+function srsReview(k,good){
+  S.srs=S.srs||{};const r=S.srs[k]||{interval:1,wrong:0};
+  const d=new Date();
+  if(good){r.interval=Math.min(60,(r.interval||1)*2);d.setDate(d.getDate()+r.interval);}
+  else{r.wrong=(r.wrong||0)+1;r.interval=0;}/* due=今天：没记住的卡留在今日队列里循环出现 */
+  r.due=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  S.srs[k]=r;save();
+}
+function vHuman(v){
+  const mode=(location.hash.slice(2).split('/')[1])||'flash';
+  const deck=buildDeck();
+  const t0=today();
+  const isDue=c=>{const r=(S.srs||{})[c.k];return !!(r&&r.due&&r.due<=t0);};
+  const order=deck.slice().sort((a,b)=>(isDue(a)?0:1)-(isDue(b)?0:1));
+  if(FIDX>=order.length)FIDX=0;
+  const tabs=[['flash','闪卡'],['def','攻防对照表'],['log','此刻哪条在推我']];
+  let body='';
+  if(mode==='flash'){
+    const c=order[FIDX];
+    body=`<div class="card flash"><span class="tag j">${c.tag}</span>
+      <div class="q">${esc(c.q)}</div>
+      ${FBACK?`<div class="a">${c.a}</div>
+      <div class="pivot" style="justify-content:center"><button id="f-good" class="on">记住</button><button id="f-bad">没记住</button></div>`:'<p class="muted">（先自己答，再翻面）</p><p><button class="btn" id="f-flip">翻面</button></p>'}
+      <p class="muted">第 ${FIDX+1} / ${order.length} 张 · 到期复习 ${deck.filter(isDue).length}</p></div>`;
+  }else if(mode==='def'){
+    body=`<div class="card"><div class="kicker">识别与反制</div>
+      <table><tr><th>对方招式</th><th>背后杠杆</th><th>识别信号</th><th>反制</th></tr>
+      ${DEFENSE.map(r=>`<tr><td><b>${esc(r[0])}</b></td><td>${esc(r[1])}</td><td>${esc(r[2])}</td><td>${esc(r[3])}</td></tr>`).join('')}</table>
+      <p class="muted">使用三守则：设计处境优先于触发偏差 · 警觉多杠杆叠加（Lollapalooza）· 对自己反向监控。</p></div>`;
+  }else{
+    const todayLog=S.leverLog?S.leverLog.filter(x=>x.ts.slice(0,10)===today()):[];
+    body=`<div class="card"><div class="kicker">自我反向监控 · 点下此刻推着你的那条</div>
+      <div class="pivot">${LEVERS.map((x,i)=>`<button data-lv="${i}" title="${esc(x.hint)}">${esc(x.n)}</button>`).join('')}</div>
+      <p class="muted">点选后入账。${todayLog.length?'今日已记：'+todayLog.map(x=>esc(LEVERS[x.i]?LEVERS[x.i].n:'?')).join('、'):'今日还没记过。'}</p></div>`;
+  }
+  v.innerHTML=`<div class="card" style="padding-bottom:8px"><div class="pivot">${tabs.map(([k,t])=>`<button class="${mode===k?'on':''}" data-m="${k}">${t}</button>`).join('')}</div></div>${body}`;
+  v.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{location.hash='#human/'+b.dataset.m;});
+  const fl=document.getElementById('f-flip');
+  if(fl)fl.onclick=()=>{FBACK=true;route();};
+  const fg=document.getElementById('f-good'),fb=document.getElementById('f-bad');
+  if(fg)fg.onclick=()=>{srsReview(order[FIDX].k,true);FIDX++;FBACK=false;route();};
+  if(fb)fb.onclick=()=>{srsReview(order[FIDX].k,false);FIDX++;FBACK=false;route();};
+  v.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{
+    (S.leverLog=S.leverLog||[]).push({ts:new Date().toISOString(),i:+b.dataset.lv});save();route();});
+}
+
+function vMine(v){
+  v.innerHTML=`<div class="card"><div class="kicker">反模式库 · 12 种死法</div>
+    <h2 style="margin:4px 0">雷区周检</h2>
+    <p class="muted">最近 30 天中过招的勾上（记日期）；每条都给了对应层与对策。诚实勾选不算失败，漏勾才是。</p></div>
+  ${ANTIPATTERNS.map((a,i)=>{const hit=S.mine['a'+i];const fresh=hit&&(new Date()-new Date(hit))<30*864e5;
+    return `<div class="card" style="padding:12px 16px"><label class="chk" style="border:none;background:transparent;margin:0">
+      <input type="checkbox" data-a="${i}" ${fresh?'checked':''}>
+      <span><b>${esc(a[0])}</b> <span class="tag z">${a[2]}</span><br><span class="muted">${esc(a[1])}${hit?`<br><span class="jmeta">最近标记：${hit}</span>`:''}</span></span></label></div>`;}).join('')}`;
+  v.querySelectorAll('input[data-a]').forEach(el=>el.addEventListener('change',()=>{
+    const k='a'+el.dataset.a;S.mine[k]=el.checked?today():null;save();route();}));
+}
+
+function vCases(v){
+  const t=new Date();
+  v.innerHTML=`<div class="card"><div class="kicker">案例馆 · ${CASES.length} 例</div>
+    <h2 style="margin:4px 0">每局都按七层解剖</h2>
+    <p class="muted">种子案例内置；守夜人（自动化）每两小时按 TOPICS 队列增补一课，刷新即见。</p></div>
+  ${CASES.slice().reverse().map(c=>{const fresh=(t-new Date(c.date))<3*864e5;
+    return `<div class="card"><div class="casehead" data-c="${c.id}"><h3>${esc(c.title)}</h3>${fresh?'<span class="newpill">新</span>':''}
+      <div class="jmeta">${esc(c.date)} · ${esc(c.source_line)}</div></div>
+      <div class="cbody" style="display:none">
+        <p style="margin:10px 0 4px">${esc(c.context||'')}</p>
+        <p style="margin:4px 0"><b style="color:var(--zhu)">诊断</b>：${esc(c.diagnosis||'')}</p>
+        ${c.wuyao?`<table><tr><th>玩家</th><td>${esc(c.wuyao.players||'')}</td><th>利益</th><td>${esc(c.wuyao.interests||'')}</td></tr>
+          <tr><th>规则</th><td>${esc(c.wuyao.rules||'')}</td><th>信息</th><td>${esc(c.wuyao.info||'')}</td></tr>
+          <tr><th>时间窗</th><td colspan="3">${esc(c.wuyao.window||'')}</td></tr></table>`:''}
+        ${c.levers?`<p class="muted" style="margin:8px 0 2px"><b>人性杠杆</b>：</p><ul class="muted" style="margin:2px 0 2px 20px">${c.levers.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+        ${c.zhengqi?`<p class="muted" style="margin:4px 0"><b>正奇</b>：${esc(c.zhengqi)}</p>`:''}
+        ${c.review?`<p class="muted" style="margin:4px 0"><b>复盘</b>：</p><ul class="muted" style="margin:2px 0 2px 20px">${c.review.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}
+        <p style="margin:8px 0 2px"><b>一句话带走</b>：${esc(c.takeaway||'')}</p>
+        <div class="src">涉及层：${(c.layers||[]).join(' · ')}${(c.links||[]).length?' · <a href="'+esc(c.links[0])+'">来源/深读</a>':''}</div>
+      </div></div>`;}).join('')}`;
+  v.querySelectorAll('.casehead').forEach(hh=>hh.onclick=()=>{
+    const b=hh.parentElement.querySelector('.cbody');b.style.display=b.style.display==='none'?'block':'none';});
+}
+
+function vData(v){
+  const ok=(function(){try{localStorage.setItem('__t','1');localStorage.removeItem('__t');return true;}catch(e){return false;}})();
+  v.innerHTML=`<div class="card"><div class="kicker">账本健康</div>
+    <div class="stat"><div><b>${S.journal.length}</b>日志</div><div><b>${S.canvases.length}</b>画布</div>
+    <div><b>${Object.keys(S.checks).length}</b>四连问天数</div><div><b>${Object.values(S.mine).filter(Boolean).length}</b>雷区标记</div>
+    <div><b>${(S.leverLog||[]).length}</b>杠杆自察</div></div>
+    <p class="muted" style="margin-top:10px">${ok?'存储正常（localStorage）。':'⚠️ 此浏览器限制了本地存储（常见于隐私模式）：功能可用但刷新即失，请换 Chrome 正常窗口使用。'}数据只存在本机。建议每周导出一次备份。</p>
+    <p><button class="btn p" id="d-exp">导出备份 JSON</button>
+    <label class="btn ghost" style="cursor:pointer">导入备份<input id="d-imp" type="file" accept="application/json" style="display:none"></label>
+    <button class="btn ghost" id="d-wipe" style="color:var(--zhu)">清空账本（双击确认）</button></p></div>
+  <div class="card"><div class="kicker">弱项分布（弱项雷达的数据源）</div>
+    ${(()=>{const w=weakness();const mx=Math.max(1,...Object.values(w));
+      return LAYERS.map(L=>`<div style="display:flex;align-items:center;gap:10px;margin:5px 0"><span class="tag q" style="min-width:36px;text-align:center">${L.id}</span><div class="bar" style="flex:1"><i style="width:${w[L.id]/mx*100}%"></i></div><span class="muted" style="min-width:20px;text-align:right">${w[L.id]}</span></div>`).join('');})()}
+    <p class="muted">数据源：雷区标记 + 复盘归层 + 闪卡「没记住」。柱子最长的层就是弱项雷达今天逼你练的层。</p></div>
+  <div class="card"><div class="kicker">关于</div>
+    <p style="margin:6px 0">谋局道场 v1.4（建于 2026-09-15）：把 <b>谋局·步棋·人局·人性·本心</b> 五件事装进一个每天能用的工具。
+    知识脊柱为七层（L0–L6），整合自战略博弈线（谋局能力讲义）与人性科学线 01–06 章。
+    学习引擎：v1.2 弱项雷达 → v1.3 间隔重复+案例自动成卡+教训回放 → v1.4 <b>教训卡</b>（你自己的复盘自动进闪卡池，系统从你的经历学习）+ 没记住当日留队 + 弱项分布可视化。</p>
+    <p class="muted">姊妹形态：<b>eq-coach 技能</b>（~/.claude/skills/eq-coach/，CLI 演练+自适应出题，面向 agent 会话）——本道场面向人、用浏览器练谋局工具与账本，两者互为补充。</p>
+    <p class="muted">底稿目录：analysis/eq-human-nature/ · 案例由守夜人自动化按 TOPICS.md 队列持续增补 · 审计：audit/dojo-curator.jsonl</p></div>`;
+  document.getElementById('d-exp').onclick=()=>{
+    const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download='dojo-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href);};
+  document.getElementById('d-imp').onchange=e=>{
+    const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+    rd.onload=()=>{try{const d=JSON.parse(rd.result);if(!d.journal)throw 0;
+      S=Object.assign(blank(),d);save();alert('导入成功：'+S.journal.length+' 条日志');route();}catch(err){alert('文件不像道场备份，未导入。');}};
+    rd.readAsText(f);};
+  const w=document.getElementById('d-wipe');let armed=false;
+  w.onclick=()=>{if(!armed){armed=true;w.textContent='再点一次确认清空';setTimeout(()=>{armed=false;w.textContent='清空账本（双击确认）';},3000);}
+    else{S=blank();save();route();}};
+}
+
+/* init */
+route();
+document.addEventListener('keydown',e=>{if(e.key==='/'&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA'){const q=document.getElementById('q');if(q){q.focus();e.preventDefault();}}});
+</script>
+</body>
+</html>
