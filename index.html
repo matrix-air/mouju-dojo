@@ -102,12 +102,12 @@ a{color:var(--qing);}
   <nav id="nav"></nav>
 </div></header>
 <main id="view"></main>
-<footer>知识底稿：analysis/eq-human-nature/（讲义 + 01–06 章）· 数据仅存本机浏览器，请常到「数据」页导出备份 · v1.4 · 间隔重复+教训卡+弱项分布 · 2026-09-15</footer>
+<footer>知识底稿：analysis/eq-human-nature/（讲义 + 01–06 章）· 数据仅存本机浏览器，请常到「数据」页导出备份 · v1.5 · 案例馆 12 例+今日页最近三课 · 2026-09-16</footer>
 
 <script>
 'use strict';
 /* ================= 数据层 ================= */
-const BUILD='2026-09-15';
+const BUILD='2026-09-16';
 const LAYERS=[
 {id:'L0',n:'本心罗盘',slogan:'坚守本心',color:'#b5402e',one:'本心是开局前唯一必须锁定的参数：谋略的一切手段都消耗「你是谁」这个资产，先记账才有资格谈消耗。',
  models:[
@@ -354,6 +354,7 @@ function vToday(v){
   const lastRev=S.journal.filter(j=>j.type==='review').slice(-1)[0];
   const lesson=lastRev?((lastRev.text.split('｜改：')[1]||'').trim()):'';
   const latest=CASES[CASES.length-1];
+  const recent=CASES.slice(-3).reverse();
   v.innerHTML=`
   <div class="card"><div class="kicker">今日 · ${t}</div>
     <div class="stat" style="align-items:center">
@@ -383,7 +384,8 @@ function vToday(v){
       <a class="btn p" href="#human/flash">去复习</a></div></div>
   ${latest?`<div class="card"><div class="kicker">守夜人最新一课 · ${esc(latest.date)}</div>
     <h3 style="margin:4px 0"><a href="#cases">${esc(latest.title)}</a></h3>
-    <p class="muted" style="margin:6px 0">${esc(latest.diagnosis||'')}</p></div>`:''}
+    <p class="muted" style="margin:6px 0">${esc(latest.diagnosis||'')}</p>
+    ${recent.length>1?recent.slice(1).map(c=>`<div class="jitem" style="font-size:13.5px"><a href="#cases"><b>${esc(c.title)}</b></a> <span class="jmeta">${esc(c.date)}</span><br><span class="muted">${esc(c.diagnosis||'')}</span></div>`).join('')+`<div class="src" style="margin-top:8px"><a href="#cases">案例馆全部 ${CASES.length} 例 →</a></div>`:''}</div>`:''}
   <div class="grid g3">
     ${[['#canvas','开一张识局画布'],['#move','走一次落子决策树'],['#review','做一次复盘三问'],['#human','翻几张人性闪卡'],['#mine','查一遍雷区'],['#data','导出备份']].map(([h,t])=>`<a class="btn" href="${h}" style="text-align:center">${t}</a>`).join('')}
   </div>`;
@@ -636,9 +638,9 @@ function vData(v){
       return LAYERS.map(L=>`<div style="display:flex;align-items:center;gap:10px;margin:5px 0"><span class="tag q" style="min-width:36px;text-align:center">${L.id}</span><div class="bar" style="flex:1"><i style="width:${w[L.id]/mx*100}%"></i></div><span class="muted" style="min-width:20px;text-align:right">${w[L.id]}</span></div>`).join('');})()}
     <p class="muted">数据源：雷区标记 + 复盘归层 + 闪卡「没记住」。柱子最长的层就是弱项雷达今天逼你练的层。</p></div>
   <div class="card"><div class="kicker">关于</div>
-    <p style="margin:6px 0">谋局道场 v1.4（建于 2026-09-15）：把 <b>谋局·步棋·人局·人性·本心</b> 五件事装进一个每天能用的工具。
+    <p style="margin:6px 0">谋局道场 v1.5（建于 2026-09-15）：把 <b>谋局·步棋·人局·人性·本心</b> 五件事装进一个每天能用的工具。
     知识脊柱为七层（L0–L6），整合自战略博弈线（谋局能力讲义）与人性科学线 01–06 章。
-    学习引擎：v1.2 弱项雷达 → v1.3 间隔重复+案例自动成卡+教训回放 → v1.4 <b>教训卡</b>（你自己的复盘自动进闪卡池，系统从你的经历学习）+ 没记住当日留队 + 弱项分布可视化。</p>
+    学习引擎：v1.2 弱项雷达 → v1.3 间隔重复+案例自动成卡+教训回放 → v1.4 <b>教训卡</b>（你自己的复盘自动进闪卡池，系统从你的经历学习）+ 没记住当日留队 + 弱项分布可视化 → v1.5 案例馆扩至 12 例 + 今日页最近三课。</p>
     <p class="muted">姊妹形态：<b>eq-coach 技能</b>（~/.claude/skills/eq-coach/，CLI 演练+自适应出题，面向 agent 会话）——本道场面向人、用浏览器练谋局工具与账本，两者互为补充。</p>
     <p class="muted">底稿目录：analysis/eq-human-nature/ · 案例由守夜人自动化按 TOPICS.md 队列持续增补 · 审计：audit/dojo-curator.jsonl</p></div>`;
   document.getElementById('d-exp').onclick=()=>{
