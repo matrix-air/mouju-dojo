@@ -102,7 +102,7 @@ a{color:var(--qing);}
   <nav id="nav"></nav>
 </div></header>
 <main id="view"></main>
-<footer>知识底稿：analysis/eq-human-nature/（讲义 + 01–06 章）· 数据仅存本机浏览器，请常到「数据」页导出备份 · v1.5 · 案例馆 12 例+今日页最近三课 · 2026-09-16</footer>
+<footer>知识底稿：analysis/eq-human-nature/（讲义 + 01–06 章）· 数据仅存本机浏览器，请常到「数据」页导出备份 · v1.6 · 案例馆 17 例+今日页最近三课 · 2026-09-16</footer>
 
 <script>
 'use strict';
@@ -638,9 +638,9 @@ function vData(v){
       return LAYERS.map(L=>`<div style="display:flex;align-items:center;gap:10px;margin:5px 0"><span class="tag q" style="min-width:36px;text-align:center">${L.id}</span><div class="bar" style="flex:1"><i style="width:${w[L.id]/mx*100}%"></i></div><span class="muted" style="min-width:20px;text-align:right">${w[L.id]}</span></div>`).join('');})()}
     <p class="muted">数据源：雷区标记 + 复盘归层 + 闪卡「没记住」。柱子最长的层就是弱项雷达今天逼你练的层。</p></div>
   <div class="card"><div class="kicker">关于</div>
-    <p style="margin:6px 0">谋局道场 v1.5（建于 2026-09-15）：把 <b>谋局·步棋·人局·人性·本心</b> 五件事装进一个每天能用的工具。
+    <p style="margin:6px 0">谋局道场 v1.6（建于 2026-09-15）：把 <b>谋局·步棋·人局·人性·本心</b> 五件事装进一个每天能用的工具。
     知识脊柱为七层（L0–L6），整合自战略博弈线（谋局能力讲义）与人性科学线 01–06 章。
-    学习引擎：v1.2 弱项雷达 → v1.3 间隔重复+案例自动成卡+教训回放 → v1.4 <b>教训卡</b>（你自己的复盘自动进闪卡池，系统从你的经历学习）+ 没记住当日留队 + 弱项分布可视化 → v1.5 案例馆扩至 12 例 + 今日页最近三课。</p>
+    学习引擎：v1.2 弱项雷达 → v1.3 间隔重复+案例自动成卡+教训回放 → v1.4 <b>教训卡</b>（你自己的复盘自动进闪卡池，系统从你的经历学习）+ 没记住当日留队 + 弱项分布可视化 → v1.5 今日页最近三课 → v1.6 案例馆扩至 17 例。</p>
     <p class="muted">姊妹形态：<b>eq-coach 技能</b>（~/.claude/skills/eq-coach/，CLI 演练+自适应出题，面向 agent 会话）——本道场面向人、用浏览器练谋局工具与账本，两者互为补充。</p>
     <p class="muted">底稿目录：analysis/eq-human-nature/ · 案例由守夜人自动化按 TOPICS.md 队列持续增补 · 审计：audit/dojo-curator.jsonl</p></div>`;
   document.getElementById('d-exp').onclick=()=>{
